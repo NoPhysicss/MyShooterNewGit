@@ -553,8 +553,10 @@ float AMyShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	//Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-		 
-	CharHealthComponent->ChangeCurrentHealt(-DamageAmount);
+	if (bIsAlive)
+	{
+		CharHealthComponent->ChangeCurrentHealt(-DamageAmount);
+	}
 	
 	return ActualDamage;
 }

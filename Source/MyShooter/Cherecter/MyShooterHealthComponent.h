@@ -42,7 +42,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float CurrentHealth = 100.0f;
 
+
+
 public:	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float CoefDamage = 1.0f;
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	

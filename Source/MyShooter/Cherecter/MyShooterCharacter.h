@@ -14,9 +14,6 @@
 #include "MyShooter/Game/MyShooterPlayerController.h"
 #include "MyShooterCharacter.generated.h"
 
- 
-
-
 
 UCLASS(Blueprintable)
 class AMyShooterCharacter : public ACharacter

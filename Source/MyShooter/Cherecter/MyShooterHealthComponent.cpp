@@ -49,6 +49,11 @@ void UMyShooterHealthComponent::SetCurrentHealt(float NewHealth)
 
 void UMyShooterHealthComponent::ChangeCurrentHealt(float ChangeValue)
 {
+	if (ChangeValue < 0.0f)
+	{
+		ChangeValue *= CoefDamage;
+	}
+	
 	CurrentHealth += ChangeValue;
 
 	if (CurrentHealth > MaxHealth)
@@ -67,3 +72,5 @@ void UMyShooterHealthComponent::ChangeCurrentHealt(float ChangeValue)
 	}
 	
 }
+
+
