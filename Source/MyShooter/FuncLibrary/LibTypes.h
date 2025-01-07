@@ -5,6 +5,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Engine/DataTable.h"
 #include "PhysicsCore.h"
+#include "MyShooter/MyShooter_StateEffect.h"
 #include "LibTypes.generated.h"
 //.vcxproj
 
@@ -83,6 +84,8 @@ struct FProjectileInfo
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileSetting")
 	TMap<TEnumAsByte<EPhysicalSurface>, UParticleSystem*> HitFXs;
 	 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileSetting")
+	TSubclassOf<UMyShooter_StateEffect> Effect = nullptr;
 
 	bool TimerToExplose = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileSetting")
@@ -311,4 +314,10 @@ UCLASS()
 class MYSHOOTER_API ULibTypes : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
+public:
+
+
+	UFUNCTION()
+	static void AddEffectBySurfaceType(AActor* TakeEffectActor, TSubclassOf<UMyShooter_StateEffect> AddEffectClass, EPhysicalSurface SurfaceType);
 };

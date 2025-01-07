@@ -9,6 +9,8 @@
 #include "MyShooter/FuncLibrary/LibTypes.h"
 #include "MyShooter/ProjectileDefault.h"
 #include "MyShooter/Cherecter/MyInventoryComponent.h"
+#include "MyShooter/MyShooter_StateEffect.h"
+#include "MyShooter/Interface/MyShooter_IGameActor.h"
 #include "WeaponDefault.generated.h"
 
 

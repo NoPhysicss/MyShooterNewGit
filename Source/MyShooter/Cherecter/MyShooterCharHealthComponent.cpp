@@ -3,6 +3,14 @@
 
 #include "MyShooter/Cherecter/MyShooterCharHealthComponent.h"
 
+void UMyShooterCharHealthComponent::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_CoolDownShieldTimer, this, &UMyShooterCharHealthComponent::CoolDownShieldEnd, CoolDownShieldRecover, false);
+}
+
+
 void UMyShooterCharHealthComponent::ChangeCurrentHealt(float ChangeValue)
 {
 

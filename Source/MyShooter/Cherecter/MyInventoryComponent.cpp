@@ -387,7 +387,7 @@ bool UMyInventoryComponent::SwitchWeaponToIndex(int32 ChangeToIndex, int32 OldIn
 	{
 		SetAdditionalInfoWeapon(OldIndex, OldInfo);
 		OnSwitchWeapon.Broadcast(NewIdWeapon, NewAdditionalInfo, NewCurrentIndex);
-		//OnWeaponAmmoAviable.Broadcast()
+		//OnWeaponAmmoAviable.Broadcast(TypeWeapon);
 	}
 
 
@@ -505,7 +505,7 @@ bool UMyInventoryComponent::CheckAmmoForWeapon(EWeaponType TypeWeapon, int32 &Av
 			AviableAmmoForWeapon = AmmoSlots[i].Cout;
 			if (AviableAmmoForWeapon > 0)
 			{
-				//OnWeaponAmmoAviable.Broadcast(TypeWeapon);//remove not here, only when pickUp ammo this type, or swithc weapon
+				OnWeaponAmmoAviable.Broadcast(TypeWeapon);//remove not here, only when pickUp ammo this type, or swithc weapon
 				return true;
 			}
 

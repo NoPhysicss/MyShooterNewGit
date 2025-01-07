@@ -250,14 +250,14 @@ void AWeaponDefault::Fire()
 
 						NewActor->BulletProjectileMovement->InitialSpeed = ProjectileSetting.ProjectileInitSpeed; // Установите скорость из таблицы
 						NewActor->BulletProjectileMovement->MaxSpeed = ProjectileSetting.ProjectileInitSpeed; // Установите максимальную скорость, если нужно
-						
+
 
 						UGameplayStatics::FinishSpawningActor(NewActor, SpawnTransform);
 
 						myProjectile->InitProjectile(WeaponSetting.ProjectileSetting);
 					}
 				}
-				/*else
+				else
 				{
 					FHitResult Hit;
 					TArray<AActor*> Actors;
@@ -301,12 +301,17 @@ void AWeaponDefault::Fire()
 							UGameplayStatics::PlaySoundAtLocation(GetWorld(), WeaponSetting.ProjectileSetting.HitSound, Hit.ImpactPoint);
 						}
 
-						UGameplayStatics::ApplyDamage(Hit.GetActor(), WeaponSetting.ProjectileSetting.ProjectileDamage, GetInstigatorController(), this, NULL);
-					}*/
+			
+						ULibTypes::AddEffectBySurfaceType(Hit.GetActor(), ProjectileInfo.Effect, mySurfacetype);
+						
+						
+						UGameplayStatics::ApplyPointDamage(Hit.GetActor(), WeaponSetting.ProjectileSetting.ProjectileDamage, Hit.TraceStart, Hit, GetInstigatorController(), this, NULL);
+						//UGameplayStatics::ApplyDamage(Hit.GetActor(), WeaponSetting.ProjectileSetting.ProjectileDamage, GetInstigatorController(), this, NULL);
+					}
 				}
 
 			}
-			
+
 			//SpawnBulletShell();
 			if (WeaponSetting.ShellBullets.DropMesh)
 			{
@@ -322,7 +327,7 @@ void AWeaponDefault::Fire()
 			}
 			FireRate = 1 / WeaponSetting.RateOfFire;
 			IsCooldown = true;
-		} 
+		}
 		if (GetWeaponRound() <= 0 && !WeaponReloading)
 		{
 			if (CheckCanWeaponReload())
@@ -330,7 +335,8 @@ void AWeaponDefault::Fire()
 				InitReload();
 			}
 		}
-}
+	}
+ }
 
 
 FVector AWeaponDefault::GetFireEndLocation() const

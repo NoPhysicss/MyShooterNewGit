@@ -129,7 +129,11 @@ void AProjectileDefault::BulletCollisionSphereHit(UPrimitiveComponent* HitComp, 
 		{
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), ProjectileSetting.HitSound, Hit.ImpactPoint);
 		}
+
+		ULibTypes::AddEffectBySurfaceType(Hit.GetActor(), ProjectileSetting.Effect, mySurfacetype);
 	}
+
+
 	UGameplayStatics::ApplyDamage(OtherActor, ProjectileDamage, GetInstigatorController(), this, NULL);
 	ImpactProjectile();
 }

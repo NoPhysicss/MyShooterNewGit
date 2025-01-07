@@ -14,6 +14,7 @@
 #include "TimerManager.h"
 #include "MyShooter/MyShooterInstance.h"
 #include "Math.h"
+#include "MyShooter/ProjectileDefault.h"
 #include "Engine/World.h"
 
 
@@ -557,7 +558,18 @@ float AMyShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	{
 		CharHealthComponent->ChangeCurrentHealt(-DamageAmount);
 	}
-	
+	 
+
+/*	if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
+	{
+		AProjectileDefault* myProjectile = Cast<AProjectileDefault>(DamageCauser);
+		if (myProjectile)
+		{
+			ULibTypes::AddEffectBySurfaceType(this, myProjectile->ProjectileSetting.Effect, GetSurfaceType());
+			
+		}
+	}*/
+
 	return ActualDamage;
 }
 
@@ -587,3 +599,29 @@ void AMyShooterCharacter::EnableRagDoll()
 		GetMesh()->SetSimulatePhysics(true);
 	}
 }
+
+EPhysicalSurface AMyShooterCharacter::GetSurfaceType()
+{
+	EPhysicalSurface Result = EPhysicalSurface::SurfaceType1;
+	if (CharHealthComponent)
+	{
+		if (CharHealthComponent->GetCurrentShield() <= 0.0f)
+		{
+			if (GetMesh())
+			{
+				UMaterialInterface* myMaterial = GetMesh()->GetMaterial(0);
+				if (myMaterial)
+				{
+					Result = myMaterial->GetPhysicalMaterial()->SurfaceType;
+				}
+			}
+		}
+	}
+	return Result;
+}
+
+//bool AMyShooterCharacter::AviableForEffects_Implementation()
+//{
+//	UE_LOG(LogTemp, Warning, TEXT(" AMyShooterCharacter::AviableForEffects_Implementation"))
+//	return true;
+//}

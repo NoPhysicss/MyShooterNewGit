@@ -12,11 +12,13 @@
 #include "MyShooter/Cherecter/MyShooterCharHealthComponent.h"
 #include "MyShooter/Cherecter/MyShooterHealthComponent.h"
 #include "MyShooter/Game/MyShooterPlayerController.h"
+#include "MyShooter/MyShooter_StateEffect.h"
+#include "MyShooter/Interface/MyShooter_IGameActor.h"
 #include "MyShooterCharacter.generated.h"
 
 
 UCLASS(Blueprintable)
-class AMyShooterCharacter : public ACharacter
+class AMyShooterCharacter : public ACharacter, public IMyShooter_IGameActor
 {
 	GENERATED_BODY()
 
@@ -174,10 +176,16 @@ public:
 	int32 CurrentIndexWeapon = 0;
 
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	
+	
 	UFUNCTION()
 	void CharDead();
 	
 	void EnableRagDoll();
 
+
+	//Interface
+	//bool AviableForEffects_Implementation() override;
+	EPhysicalSurface GetSurfaceType() override;
 };
 

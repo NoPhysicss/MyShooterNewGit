@@ -28,6 +28,8 @@ public:
 
 protected:
 
+	void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere)
 	float Shield = 100.0f;
 

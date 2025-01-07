@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/SphereComponent.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "MyShooter/MyShooter_StateEffect.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 
