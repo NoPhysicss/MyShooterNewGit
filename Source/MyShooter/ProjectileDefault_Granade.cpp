@@ -94,7 +94,7 @@ void AProjectileDefault_Granade::Explose()
 		ProjectileSetting.ExploseMaxDamageSize,
 		ProjectileSetting.ExploseMinDamageSize,
 		5,
-		NULL, IgnoreActor, nullptr, nullptr);
+		NULL, IgnoreActor, this, nullptr);
 
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ProjectileSetting.ExploadedGround, FTransform(FRotator(0,0,0), this->GetActorLocation(), FVector(1.0f)));
 	this->Destroy();

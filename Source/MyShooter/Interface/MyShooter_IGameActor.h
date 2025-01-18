@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+#include "MyShooter/MyShooter_StateEffect.h"
 #include "MyShooter_IGameActor.generated.h"
 
 // This class does not need to be modified.
@@ -32,4 +33,10 @@ public:
 
 
 	virtual EPhysicalSurface GetSurfaceType();
+
+	TArray<UMyShooter_StateEffect*> AllCurrentEffects;
+
+	virtual TArray<UMyShooter_StateEffect*> GetAllCurrentEffects();
+	virtual void RemoveEffect(UMyShooter_StateEffect* RemovedEffect);
+	virtual void AddEffect(UMyShooter_StateEffect* NewEffect);
 };

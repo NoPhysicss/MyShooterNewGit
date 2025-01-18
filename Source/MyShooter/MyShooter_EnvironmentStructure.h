@@ -7,6 +7,7 @@
 #include "MyShooter/Interface/MyShooter_IGameActor.h"
 #include "Materials/MaterialInterface.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "MyShooter/MyShooter_StateEffect.h"
 #include "MyShooter_EnvironmentStructure.generated.h"
 
 UCLASS()
@@ -31,4 +32,12 @@ public:
 	//bool AviableForEffectsOnlyCPP() override;
 
 	EPhysicalSurface GetSurfaceType() override;
+
+
+
+	TArray<UMyShooter_StateEffect*> GetAllCurrentEffects() override;
+	void RemoveEffect(UMyShooter_StateEffect* RemovedEffect) override;
+	void AddEffect(UMyShooter_StateEffect* NewEffect) override;
+	//effect
+	TArray<UMyShooter_StateEffect*> Effects;
 };

@@ -110,6 +110,7 @@ void AMyShooterCharacter::SetupPlayerInputComponent(UInputComponent* NewInputCom
 	NewInputComponent->BindAction(TEXT("SwitchNextWeapon"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TrySwicthNextWeapon);
 	NewInputComponent->BindAction(TEXT("SwitchPreviosWeapon"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TrySwitchPreviosWeapon);
 
+	NewInputComponent->BindAction(TEXT("AbilityAction"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TryAbilityEnabled);
 }
 
 void AMyShooterCharacter::BeginPlay()
@@ -560,15 +561,15 @@ float AMyShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Da
 	}
 	 
 
-/*	if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
+	if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
 	{
 		AProjectileDefault* myProjectile = Cast<AProjectileDefault>(DamageCauser);
 		if (myProjectile)
 		{
-			ULibTypes::AddEffectBySurfaceType(this, myProjectile->ProjectileSetting.Effect, GetSurfaceType());
+			ULibTypes::AddEffectBySurfaceType(this, myProjectile->ProjectileSetting.Effect, GetSurfaceType(), GetOwner()->GetActorLocation());
 			
 		}
-	}*/
+	}
 
 	return ActualDamage;
 }
@@ -602,7 +603,7 @@ void AMyShooterCharacter::EnableRagDoll()
 
 EPhysicalSurface AMyShooterCharacter::GetSurfaceType()
 {
-	EPhysicalSurface Result = EPhysicalSurface::SurfaceType1;
+	EPhysicalSurface Result = EPhysicalSurface::SurfaceType_Default;
 	if (CharHealthComponent)
 	{
 		if (CharHealthComponent->GetCurrentShield() <= 0.0f)
@@ -618,6 +619,33 @@ EPhysicalSurface AMyShooterCharacter::GetSurfaceType()
 		}
 	}
 	return Result;
+}
+
+TArray<UMyShooter_StateEffect*> AMyShooterCharacter::GetAllCurrentEffects()
+{
+	return Effects;
+}
+
+void AMyShooterCharacter::RemoveEffect(UMyShooter_StateEffect* RemovedEffect)
+{
+	Effects.Remove(RemovedEffect);
+}
+
+void AMyShooterCharacter::AddEffect(UMyShooter_StateEffect* NewEffect)
+{
+	Effects.Add(NewEffect);
+}
+
+void AMyShooterCharacter::TryAbilityEnabled()
+{
+	if (AbilityEffect)
+	{
+		UMyShooter_StateEffect* NewEffect = NewObject<UMyShooter_StateEffect>(this, AbilityEffect);
+		if (NewEffect)
+		{
+			NewEffect->InitObject(this);
+		}
+	}
 }
 
 //bool AMyShooterCharacter::AviableForEffects_Implementation()

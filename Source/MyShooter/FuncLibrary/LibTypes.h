@@ -318,6 +318,6 @@ class MYSHOOTER_API ULibTypes : public UBlueprintFunctionLibrary
 public:
 
 
-	UFUNCTION()
-	static void AddEffectBySurfaceType(AActor* TakeEffectActor, TSubclassOf<UMyShooter_StateEffect> AddEffectClass, EPhysicalSurface SurfaceType);
+	UFUNCTION(BlueprintCallable)
+	static void AddEffectBySurfaceType(AActor* TakeEffectActor, TSubclassOf<UMyShooter_StateEffect> AddEffectClass, EPhysicalSurface SurfaceType, FVector HitLocation);
 };

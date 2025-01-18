@@ -33,7 +33,7 @@ public:
 	class UDecalComponent* ExplosionMinRadiusDecal = nullptr;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)
 	class UDecalComponent* ExplosionMaxRadiusDecal = nullptr;
-
+	UPROPERTY(BlueprintReadOnly)
 	FProjectileInfo ProjectileSetting;
 
 protected:

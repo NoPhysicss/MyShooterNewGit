@@ -13,6 +13,7 @@
 #include "MyShooter/Cherecter/MyShooterHealthComponent.h"
 #include "MyShooter/Game/MyShooterPlayerController.h"
 #include "MyShooter/MyShooter_StateEffect.h"
+#include "Engine/DamageEvents.h"
 #include "MyShooter/Interface/MyShooter_IGameActor.h"
 #include "MyShooterCharacter.generated.h"
 
@@ -88,6 +89,9 @@ public:
 	bool bIsAlive = true;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	TArray<UAnimMontage*> DeadsAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability")
+	TSubclassOf<UMyShooter_StateEffect> AbilityEffect;
 
 	//weapon
 	AWeaponDefault* CurrentWeapon = nullptr;
@@ -185,7 +189,14 @@ public:
 
 
 	//Interface
-	//bool AviableForEffects_Implementation() override;
+	
 	EPhysicalSurface GetSurfaceType() override;
+	TArray<UMyShooter_StateEffect*> GetAllCurrentEffects() override;
+	void RemoveEffect(UMyShooter_StateEffect* RemovedEffect) override;
+	void AddEffect(UMyShooter_StateEffect* NewEffect) override;
+	//effect
+	TArray<UMyShooter_StateEffect*> Effects;
+
+	void TryAbilityEnabled();
 };
 

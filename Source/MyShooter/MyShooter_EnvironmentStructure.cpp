@@ -40,17 +40,20 @@ EPhysicalSurface AMyShooter_EnvironmentStructure::GetSurfaceType()
 	return Result;
 }
 
-/*bool AMyShooter_EnvironmentStructure::AviableForEffectsOnlyCPP()
+
+TArray<UMyShooter_StateEffect*> AMyShooter_EnvironmentStructure::GetAllCurrentEffects()
 {
-	UE_LOG(LogTemp, Warning, TEXT("AMyShooter_EnvironmentStructure::AviableForEffects_OnlyCPP "))
-	return true;
+	return Effects;
 }
 
-bool AMyShooter_EnvironmentStructure::AviableForEffects_Implementation()
+void AMyShooter_EnvironmentStructure::RemoveEffect(UMyShooter_StateEffect* RemovedEffect)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AMyShooter_EnvironmentStructure::AviableForEffects_Implementation "))
-	return false;
-}*/
+	Effects.Remove(RemovedEffect);
+}
 
+void AMyShooter_EnvironmentStructure::AddEffect(UMyShooter_StateEffect* NewEffect)
+{
+	Effects.Add(NewEffect);
+}
 
 

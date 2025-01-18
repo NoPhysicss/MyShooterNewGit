@@ -9,3 +9,18 @@ EPhysicalSurface IMyShooter_IGameActor::GetSurfaceType()
 {
 	return EPhysicalSurface::SurfaceType_Default;
 }
+
+TArray<UMyShooter_StateEffect*> IMyShooter_IGameActor::GetAllCurrentEffects()
+{
+	return AllCurrentEffects;
+}
+
+void IMyShooter_IGameActor::RemoveEffect(UMyShooter_StateEffect* RemovedEffect)
+{
+	AllCurrentEffects.Remove(RemovedEffect);
+}
+
+void IMyShooter_IGameActor::AddEffect(UMyShooter_StateEffect* NewEffect)
+{
+	AllCurrentEffects.Add(NewEffect);
+}
