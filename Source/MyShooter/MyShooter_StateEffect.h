@@ -108,9 +108,9 @@ public:
 	FTimerHandle TimerHandle_EffectTimer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Setting Execute Status")
-	UParticleSystem* ParticleEffect = nullptr;
+	UNiagaraSystem* NiagaraEffect = nullptr;
 
-	UParticleSystemComponent* ParticleEmitter = nullptr;
+	UNiagaraComponent* NiagaraComponent = nullptr;
 };
 
 UCLASS()

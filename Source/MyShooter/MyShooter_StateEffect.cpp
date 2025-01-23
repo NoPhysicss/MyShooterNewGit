@@ -124,12 +124,10 @@ bool UMyShooter_StateEffect_ExecuteTimerStatsIncomeDamage::InitObject(AActor* Ac
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle_EffectTimer, this, &UMyShooter_StateEffect_ExecuteTimerStatsIncomeDamage::DestroyObject, Timer, false);
 	
-	if (ParticleEffect)
-	{
-		FName NameBoneToAttached;
-		FVector Loc = FVector(0);
 
-		ParticleEmitter = UGameplayStatics::SpawnEmitterAttached(ParticleEffect, myActor->GetRootComponent(), NameBoneToAttached, Loc, FRotator::ZeroRotator, EAttachLocation::SnapToTarget, false);
+	if (NiagaraEffect)
+	{
+		NiagaraComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraEffect, HitPoint, FRotator::ZeroRotator);
 	}
 	if (myActor)
 	{
@@ -146,8 +144,8 @@ bool UMyShooter_StateEffect_ExecuteTimerStatsIncomeDamage::InitObject(AActor* Ac
 
 void UMyShooter_StateEffect_ExecuteTimerStatsIncomeDamage::DestroyObject()
 {
-	ParticleEmitter->DestroyComponent();
-	ParticleEmitter = nullptr;
+	NiagaraComponent->DestroyComponent();
+	NiagaraComponent = nullptr;
 	UMyShooterHealthComponent* myHealthComp = Cast<UMyShooterHealthComponent>(myActor->GetComponentByClass(UMyShooterHealthComponent::StaticClass()));
 	myHealthComp->CoefDamage = tempmark;
 	tempmark = 0;
