@@ -17,10 +17,8 @@ TArray<UMyShooter_StateEffect*> IMyShooter_IGameActor::GetAllCurrentEffects()
 
 void IMyShooter_IGameActor::RemoveEffect(UMyShooter_StateEffect* RemovedEffect)
 {
-	AllCurrentEffects.Remove(RemovedEffect);
 }
 
 void IMyShooter_IGameActor::AddEffect(UMyShooter_StateEffect* NewEffect)
 {
-	AllCurrentEffects.Add(NewEffect);
 }

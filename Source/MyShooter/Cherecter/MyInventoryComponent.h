@@ -20,6 +20,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponAmmoAviable, EWeaponType, W
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUpdateWeaponSlots, int32, IndexSlotChange, FWeaponSlot, NewInfo);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponNotHaveRound, int32, IndexSlotWeapon);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponHaveRound, int32, IndexSlotWeapon);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MYSHOOTER_API UMyInventoryComponent : public UActorComponent
@@ -30,26 +33,30 @@ public:
 	// Sets default values for this component's properties
 	UMyInventoryComponent();
 
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnSwitchWeapon OnSwitchWeapon;
-	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	//Event on change ammo in slots by weaponType
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnAmmoChange OnAmmoChange;
-	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnWeaponAdditionalInfoChange OnWeaponAdditionalInfoChange;
-	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	//Event Ammo slots after change still empty rounds
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnWeaponAmmoEmpty OnWeaponAmmoEmpty;
-	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	//Event Ammo slots after chage have rounds
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnWeaponAmmoAviable OnWeaponAmmoAviable;
-	UPROPERTY(BlueprintAssignable, EditAnywhere, BlueprintReadWrite, Category = "Inventory")
+	//Event weapon was change by slotIndex
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
 	FOnUpdateWeaponSlots OnUpdateWeaponSlots;
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	//Event current weapon not have additional_Rounds 
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnWeaponNotHaveRound OnWeaponNotHaveRound;
+	//Event current weapon have additional_Rounds 
+	UPROPERTY(BlueprintAssignable, Category = "Inventory")
+	FOnWeaponHaveRound OnWeaponHaveRound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapons")
 	TArray<FWeaponSlot> WeaponSlots;
@@ -58,17 +65,28 @@ public:
 
 	int32 MaxSlotsWeapon = 0;
 
-	//TODO OMG Refactoring need!!!
-	bool SwitchWeaponToIndex(int32 ChangeToIndex, int32 OldIndex, FAdditionalWeaponInfo OldInfo, bool bIsForward);
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+
+	bool SwitchWeaponToIndexByNextPreviosIndex(int32 ChangeToIndex, int32 OldIndex, FAdditionalWeaponInfo OldInfo, bool bIsForward);
+	bool SwitchWeaponByIndex(int32 IndexWeaponToChange, int32 PreviosIndex, FAdditionalWeaponInfo PreviosWeaponInfo);
+
+	void SetAdditionalInfoWeapon(int32 IndexWeapon, FAdditionalWeaponInfo NewInfo);
 
 	FAdditionalWeaponInfo GetAdditionalInfoWeapon(int32 IndexWeapon);
 	int32 GetWeaponIndexSlotByName(FName IdWeaponName);
 	FName GetWeaponNameBySlotIndex(int32 indexSlot);
-	void SetAdditionalInfoWeapon(int32 IndexWeapon, FAdditionalWeaponInfo NewInfo);
+	bool GetWeaponTypeByIndexSlot(int32 IndexSlot, EWeaponType& WeaponType);
+	bool GetWeaponTypeByNameWeapon(FName IdWeaponName, EWeaponType& WeaponType);
 
 	UFUNCTION(BlueprintCallable)
 	void AmmoSlotChangeValue(EWeaponType TypeWeapon, int32 CoutChangeAmmo);
-
 	bool CheckAmmoForWeapon(EWeaponType TypeWeapon, int32 &AviableAmmoForWeapon);
 
 	//Interface PickUp Actors
@@ -84,4 +102,5 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interface")
 	bool GetDropItemInfoFromInventory(int32 IndexSlot, FDropItem& DropItemInfo);
 
+	bool alreadyhas = false;
 };

@@ -32,18 +32,6 @@ AWeaponDefault::AWeaponDefault()
 
 	ShootLocation = CreateDefaultSubobject<UArrowComponent>(TEXT("ShootLocation"));
 	ShootLocation->SetupAttachment(RootComponent);
-
-	//Not need, its a referance
-
-	/*StaticMeshShell = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshShell"));
-	StaticMeshShell->SetVisibility(false);
-	StaticMeshShell->SetSimulatePhysics(false);
-	//To Do shell collision false with weapon and character
-
-	StaticMeshMagazin = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshMagazin"));
-	StaticMeshMagazin->SetVisibility(false);
-	StaticMeshMagazin->SetSimulatePhysics(false);*/
-
 }
 
 // Called when the game starts or when spawned
@@ -52,8 +40,6 @@ void AWeaponDefault::BeginPlay()
 	Super::BeginPlay();
 
 	WeaponInit();
-
-
 }
 
 // Called every frame
@@ -218,10 +204,10 @@ void AWeaponDefault::Fire()
 			FVector EndLocation;
 			for (int8 i = 0; i < NumberProjectile; i++)
 			{
+				EndLocation = GetFireEndLocation();
+
 				if (ProjectileInfo.Projectile)
 				{
-					EndLocation = GetFireEndLocation();
-
 					FVector Dir = EndLocation - SpawnLocation;
 
 					Dir.Normalize();
@@ -236,7 +222,7 @@ void AWeaponDefault::Fire()
 
 					AProjectileDefault* myProjectile = Cast<AProjectileDefault>(GetWorld()->SpawnActor(ProjectileInfo.Projectile, &SpawnLocation, &SpawnRotation, SpawnParams));
 					if (myProjectile)
-					{
+					{	
 
 						TSubclassOf<AProjectileDefault> SpawnClass = AProjectileDefault::StaticClass();
 						FTransform SpawnTransform = ShootLocation->GetComponentTransform();
@@ -595,117 +581,13 @@ unsigned int AWeaponDefault::GetAviableAmmoForReload()
 			if (MyInv->CheckAmmoForWeapon(WeaponSetting.WeaponType, AviableAmmoForWeapon))
 			{
 				AviableAmmoForWeapon2 = AviableAmmoForWeapon;
+				return AviableAmmoForWeapon2;
 			}
 		}
 	}
-	return AviableAmmoForWeapon2;
+	return AviableAmmoForWeapon;
 }
 
-/*void AWeaponDefault::SpawnBulletShell()
-{
-	if (WeaponSetting.ShellBullets)
-	{
-		FVector SocketLocation = SkeletalMeshWeapon->GetSocketLocation("AmmoEject");
-		FRotator SocketRotation = SkeletalMeshWeapon->GetSocketRotation("AmmoEject");
-
-
-		UStaticMeshComponent* NewShell = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass());
-		if (NewShell)
-		{
-			NewShell->RegisterComponent();
-			NewShell->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-			NewShell->SetStaticMesh(WeaponSetting.ShellBullets);
-			NewShell->SetWorldLocation(SocketLocation);
-			NewShell->SetWorldRotation(SocketRotation);
-			NewShell->SetWorldScale3D(FVector(1.0f));
-			NewShell->SetVisibility(true);
-			NewShell->SetSimulatePhysics(true);
-			NewShell->AddImpulse(SocketRotation.Vector() * 3.0f);
-
-			Shells.Add(NewShell);
-
-			FTimerHandle TimerHandle;
-			FTimerDelegate TimerDelegate;
-			TimerDelegate.BindUFunction(this, FName("HideBulletShell"), NewShell);
-			UE_LOG(LogTemp, Warning, TEXT("Function name: HideBulletShell"));
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 5.0f, false);
-		}
-	}
-}
-
-void AWeaponDefault::ShellCollisionEnable(UStaticMeshComponent* NewShell)
-{
-	NewShell->SetCollisionProfileName(TEXT("NoCollision"));
-}
-
-void AWeaponDefault::HideBulletShell(UStaticMeshComponent* NewShell)
-{
-	if (NewShell)
-	{
-		NewShell->SetVisibility(false);
-		NewShell->SetSimulatePhysics(false);
-
-
-		Shells.Remove(NewShell);
-		NewShell->DestroyComponent();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Shell is null"));
-	}
-}
-
-void AWeaponDefault::SpawnWeaponMagazin()
-{
-	if (WeaponSetting.MagazineDrop)
-	{
-		FVector SocketLocation = SkeletalMeshWeapon->GetSocketLocation("MagazinDrop");
-		FRotator SocketRotation = SkeletalMeshWeapon->GetSocketRotation("MagazinDrop");
-
-		UStaticMeshComponent* NewMagazin = NewObject<UStaticMeshComponent>(this, UStaticMeshComponent::StaticClass());
-
-		if (NewMagazin)
-		{
-			FTimerHandle TimerHandle;
-			FTimerDelegate TimerDelegate;
-
-			NewMagazin->RegisterComponent();
-			NewMagazin->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-			NewMagazin->SetStaticMesh(WeaponSetting.MagazineDrop);
-			NewMagazin->SetWorldLocation(SocketLocation);
-			NewMagazin->SetWorldRotation(SocketRotation);
-			NewMagazin->SetWorldScale3D(FVector(1.0f));
-			NewMagazin->SetVisibility(true);
-			NewMagazin->SetSimulatePhysics(true);
-			NewMagazin->AddImpulse(SocketRotation.Vector() * 1.0f);
-
-			Magazins.Add(NewMagazin);
-
-			
-			TimerDelegate.BindUFunction(this, FName("HideMagazin"), NewMagazin);
-			UE_LOG(LogTemp, Warning, TEXT("Function name: HideMagazin"));
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, TimerDelegate, 15.0f, false);
-		}
-	}
-}
-
-void AWeaponDefault::HideMagazin(UStaticMeshComponent* NewMagazin)
-{
-	if (NewMagazin)
-	{
-		NewMagazin->SetVisibility(false);
-		NewMagazin->SetSimulatePhysics(false);
-
-
-		Shells.Remove(NewMagazin);
-		NewMagazin->DestroyComponent();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Magazin is null"));
-	}
-}
-*/
 
 int8 AWeaponDefault::GetNumberProjectileByShot() const
 {
@@ -718,9 +600,6 @@ void AWeaponDefault::InitDropMesh(UStaticMesh* DropMesh, FTransform Offset, FVec
 	FTransform Transform;
 
 	FVector LocalDir = this->GetActorForwardVector() * Offset.GetLocation().X + this->GetActorRightVector() * Offset.GetLocation().Y + this->GetActorUpVector() * Offset.GetLocation().Z;
-
-
-	//FVector LocalDir = this->GetActorForwardVector() * SocketLocation.GetLocation().X + this->GetActorRightVector() * SocketLocation.GetLocation().Y + this->GetActorUpVector() * SocketLocation.GetLocation().Z;
 
 	Transform.SetLocation(GetActorLocation() + LocalDir);
 	Transform.SetScale3D(FVector(1, 1, 1));
@@ -735,10 +614,6 @@ void AWeaponDefault::InitDropMesh(UStaticMesh* DropMesh, FTransform Offset, FVec
 
 	NewActor->GetStaticMeshComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 	NewActor->GetStaticMeshComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-
-	//set parameter for new actor
-	NewActor->SetActorTickEnabled(false);
-	NewActor->InitialLifeSpan = LifeTimeMesh;
 
 	if (NewActor && NewActor->GetStaticMeshComponent())
 	{
@@ -772,14 +647,13 @@ void AWeaponDefault::InitDropMesh(UStaticMesh* DropMesh, FTransform Offset, FVec
 		if (!DropImpulseDirection.IsNearlyZero())
 		{
 			FVector FinalDir;
-			FinalDir = LocalDir + (DropImpulseDirection * 1000.0f);
+			LocalDir = LocalDir + (DropImpulseDirection * 1000.0f);
 
 			if (!FMath::IsNearlyZero(ImpulseRandomDispersion))
-			{ 
 				FinalDir += UKismetMathLibrary::RandomUnitVectorInConeInDegrees(LocalDir, ImpulseRandomDispersion);
-			}
+			FinalDir.GetSafeNormal(0.0001f);
 
-			NewActor->GetStaticMeshComponent()->AddImpulse(FinalDir.GetSafeNormal(0.0001f) * PowerImpulse);
+			NewActor->GetStaticMeshComponent()->AddImpulse(FinalDir * PowerImpulse);
 		}
 	}
 }

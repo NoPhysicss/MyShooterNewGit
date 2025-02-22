@@ -96,23 +96,6 @@ void AMyShooterCharacter::Tick(float DeltaSeconds)
 	}
 }
 
-void AMyShooterCharacter::SetupPlayerInputComponent(UInputComponent* NewInputComponent)
-{
-	Super::SetupPlayerInputComponent(NewInputComponent);
-
-	NewInputComponent->BindAxis(TEXT("MoveForward"), this, &AMyShooterCharacter::MoveInputAxisX);
-	NewInputComponent->BindAxis(TEXT("MoveRight"), this, &AMyShooterCharacter::MoveInputAxisY);
-
-	NewInputComponent->BindAction(TEXT("FireEvent"), EInputEvent::IE_Pressed, this, & AMyShooterCharacter::InputAttackPressed);
-	NewInputComponent->BindAction(TEXT("FireEvent"), EInputEvent::IE_Released, this, &AMyShooterCharacter::InputAttackReleased);
-	NewInputComponent->BindAction(TEXT("ReloadEvent"), EInputEvent::IE_Released, this, &AMyShooterCharacter::TryReloadWeapon);
-
-	NewInputComponent->BindAction(TEXT("SwitchNextWeapon"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TrySwicthNextWeapon);
-	NewInputComponent->BindAction(TEXT("SwitchPreviosWeapon"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TrySwitchPreviosWeapon);
-
-	NewInputComponent->BindAction(TEXT("AbilityAction"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TryAbilityEnabled);
-}
-
 void AMyShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -121,6 +104,47 @@ void AMyShooterCharacter::BeginPlay()
 	{
 		CurrentCursor = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), CursorMaterial, CursoreSize, FVector(0));
 	}
+}
+
+void AMyShooterCharacter::SetupPlayerInputComponent(UInputComponent* NewInputComponent)
+{
+	Super::SetupPlayerInputComponent(NewInputComponent);
+
+	NewInputComponent->BindAxis(TEXT("MoveForward"), this, &AMyShooterCharacter::MoveInputAxisX);
+	NewInputComponent->BindAxis(TEXT("MoveRight"), this, &AMyShooterCharacter::MoveInputAxisY);
+
+	NewInputComponent->BindAction(TEXT("FireEvent"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::InputAttackPressed);
+	NewInputComponent->BindAction(TEXT("FireEvent"), EInputEvent::IE_Released, this, &AMyShooterCharacter::InputAttackReleased);
+	NewInputComponent->BindAction(TEXT("ReloadEvent"), EInputEvent::IE_Released, this, &AMyShooterCharacter::TryReloadWeapon);
+
+	NewInputComponent->BindAction(TEXT("SwitchNextWeapon"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TrySwicthNextWeapon);
+	NewInputComponent->BindAction(TEXT("SwitchPreviosWeapon"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TrySwitchPreviosWeapon);
+
+	NewInputComponent->BindAction(TEXT("AbilityAction"), EInputEvent::IE_Pressed, this, &AMyShooterCharacter::TryAbilityEnabled);
+
+	TArray<FKey> HotKeys;
+	HotKeys.Add(EKeys::One);
+	HotKeys.Add(EKeys::Two);
+	HotKeys.Add(EKeys::Three);
+	HotKeys.Add(EKeys::Four);
+	HotKeys.Add(EKeys::Five);
+	HotKeys.Add(EKeys::Six);
+	HotKeys.Add(EKeys::Seven);
+	HotKeys.Add(EKeys::Eight);
+	HotKeys.Add(EKeys::Nine);
+	HotKeys.Add(EKeys::Zero);
+
+	NewInputComponent->BindKey(HotKeys[1], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<1>);
+	NewInputComponent->BindKey(HotKeys[2], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<2>);
+	NewInputComponent->BindKey(HotKeys[3], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<3>);
+	NewInputComponent->BindKey(HotKeys[4], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<4>);
+	NewInputComponent->BindKey(HotKeys[5], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<5>);
+	NewInputComponent->BindKey(HotKeys[6], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<6>);
+	NewInputComponent->BindKey(HotKeys[7], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<7>);
+	NewInputComponent->BindKey(HotKeys[8], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<8>);
+	NewInputComponent->BindKey(HotKeys[9], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<9>);
+	NewInputComponent->BindKey(HotKeys[0], IE_Pressed, this, &AMyShooterCharacter::TKeyPressed<0>);
+	
 }
 
 void AMyShooterCharacter::MoveInputAxisY(float Value)
@@ -353,6 +377,21 @@ UDecalComponent* AMyShooterCharacter::GetCursorToWorld()
 	return CurrentCursor;
 }
 
+EMovementState AMyShooterCharacter::GetMovementState()
+{
+	return MovementState;
+}
+
+TArray<UMyShooter_StateEffect*> AMyShooterCharacter::GetCurrentEffectsOnChar()
+{
+	return Effects;
+}
+
+int32 AMyShooterCharacter::GetCurrentWeaponIndex()
+{
+	return CurrentIndexWeapon;
+}
+
 void AMyShooterCharacter::AttackCharEvent(bool bIsFiring)
 {
 	AWeaponDefault* myWeapon = nullptr;
@@ -420,8 +459,8 @@ void AMyShooterCharacter::InitWeapon(FName IdWeaponName, FAdditionalWeaponInfo W
 					if (CurrentWeapon->GetWeaponRound() <= 0 && CurrentWeapon->CheckCanWeaponReload())
 						CurrentWeapon->InitReload();
 
-					if (InventoryComponent)
-						InventoryComponent->OnWeaponAmmoAviable.Broadcast(myWeapon->WeaponSetting.WeaponType);
+					//if (InventoryComponent)
+					//	InventoryComponent->OnWeaponAmmoAviable.Broadcast(myWeapon->WeaponSetting.WeaponType);
 
 				}
 			}
@@ -432,11 +471,6 @@ void AMyShooterCharacter::InitWeapon(FName IdWeaponName, FAdditionalWeaponInfo W
 		}
 	}
 
-
-}
-
-void AMyShooterCharacter::RemoveCurrentWeapon()
-{
 
 }
 
@@ -464,6 +498,29 @@ void AMyShooterCharacter::WeaponReloadEnd(bool bIsSuccess, int32 AmmoTake)
 	WeaponReloadEnd_BP(bIsSuccess);
 }
 
+bool AMyShooterCharacter::TrySwitchWeaponToIndexByKeyInput(int32 ToIndex)
+{
+	bool bIsSuccess = false;
+	if (CurrentWeapon && !CurrentWeapon->WeaponReloading && InventoryComponent->WeaponSlots.IsValidIndex(ToIndex))
+	{
+		if (CurrentIndexWeapon != ToIndex && InventoryComponent)
+		{
+			int32 OldIndex = CurrentIndexWeapon;
+			FAdditionalWeaponInfo OldInfo;
+
+			if (CurrentWeapon)
+			{
+				OldInfo = CurrentWeapon->AdditionalWeaponInfo;
+				if (CurrentWeapon->WeaponReloading)
+					CurrentWeapon->CancelReload();
+			}
+
+			bIsSuccess = InventoryComponent->SwitchWeaponByIndex(ToIndex, OldIndex, OldInfo);
+		}
+	}
+	return bIsSuccess;
+}
+
 void AMyShooterCharacter::WeaponReloadEnd_BP_Implementation(bool bIsSuccess)
 {
 	//in BP
@@ -478,7 +535,6 @@ void AMyShooterCharacter::WeaponFireStart(UAnimMontage* Anim)
 {
 	if (InventoryComponent && CurrentWeapon)
 		InventoryComponent->SetAdditionalInfoWeapon(CurrentIndexWeapon, CurrentWeapon->AdditionalWeaponInfo);
-
 	WeaponFireStart_BP(Anim);
 }
 
@@ -494,7 +550,7 @@ void AMyShooterCharacter::TrySwicthNextWeapon()
 		//We have more then one weapon go switch
 		int8 OldIndex = CurrentIndexWeapon;
 		FAdditionalWeaponInfo OldInfo;
-		if (CurrentWeapon)
+		if (CurrentWeapon && InventoryComponent->WeaponSlots.Num() > 1)
 		{
 			OldInfo = CurrentWeapon->AdditionalWeaponInfo;
 			if (CurrentWeapon->WeaponReloading)
@@ -504,13 +560,12 @@ void AMyShooterCharacter::TrySwicthNextWeapon()
 		{
 			OldInfo = InventoryComponent->WeaponSlots[0].AdditionalInfo;
 
-			InventoryComponent->SwitchWeaponToIndex(0, 0, OldInfo, true);
+			InventoryComponent->SwitchWeaponToIndexByNextPreviosIndex(0, 0, OldInfo, true);
 
 		}
-
 		if (InventoryComponent)
 		{
-			if (InventoryComponent->SwitchWeaponToIndex(CurrentIndexWeapon + 1, OldIndex, OldInfo, true))
+			if (InventoryComponent->SwitchWeaponToIndexByNextPreviosIndex(CurrentIndexWeapon + 1, OldIndex, OldInfo, true))
 			{
 			}
 		}
@@ -524,7 +579,7 @@ void AMyShooterCharacter::TrySwitchPreviosWeapon()
 		//We have more then one weapon go switch
 		int8 OldIndex = CurrentIndexWeapon;
 		FAdditionalWeaponInfo OldInfo;
-		if (CurrentWeapon)
+		if (CurrentWeapon && InventoryComponent->WeaponSlots.Num() > 1)
 		{
 			OldInfo = CurrentWeapon->AdditionalWeaponInfo;
 			if (CurrentWeapon->WeaponReloading)
@@ -534,14 +589,13 @@ void AMyShooterCharacter::TrySwitchPreviosWeapon()
 		{
 			OldInfo = InventoryComponent->WeaponSlots[0].AdditionalInfo;
 
-
-			InventoryComponent->SwitchWeaponToIndex(0, 0, OldInfo, true);
+			InventoryComponent->SwitchWeaponToIndexByNextPreviosIndex(0, 0, OldInfo, true);
 
 		}
 		if (InventoryComponent)
 		{
 			//InventoryComponent->SetAdditionalInfoWeapon(OldIndex, GetCurrentWeapon()->AdditionalWeaponInfo);
-			if (InventoryComponent->SwitchWeaponToIndex(CurrentIndexWeapon - 1, OldIndex, OldInfo, false))
+			if (InventoryComponent->SwitchWeaponToIndexByNextPreviosIndex(CurrentIndexWeapon - 1, OldIndex, OldInfo, false))
 			{
 			}
 		}
@@ -648,8 +702,3 @@ void AMyShooterCharacter::TryAbilityEnabled()
 	}
 }
 
-//bool AMyShooterCharacter::AviableForEffects_Implementation()
-//{
-//	UE_LOG(LogTemp, Warning, TEXT(" AMyShooterCharacter::AviableForEffects_Implementation"))
-//	return true;
-//}
